@@ -1,1 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>曝光公示 · 信息列表</title>
+    <style>
+        /* --- 全局重置 & 暗黑主题 --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0a0e14;
+            color: #c8d6e5;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: #111a22;
+            border: 1px solid #1f2e3b;
+            border-radius: 16px;
+            padding: 30px 25px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.7);
+        }
 
+        /* --- 头部 --- */
+        .header {
+            border-bottom: 1px solid #1f2e3b;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .site-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #4fc3f7;
+            letter-spacing: 2px;
+            text-shadow: 0 0 15px rgba(79, 195, 247, 0.2);
+        }
+        .site-title small {
+            font-size: 14px;
+            font-weight: normal;
+            color: #6a8fa0;
+            margin-left: 12px;
+        }
+        .sub-info {
+            margin-top: 8px;
+            font-size: 14px;
+            color: #6a8fa0;
+        }
+
+        /* --- 核心列表区 --- */
+        .list-item {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            padding: 14px 16px;
+            margin-bottom: 4px;
+            border-radius: 8px;
+            background: #0f1822;
+            border-left: 3px solid transparent;
+            transition: 0.2s;
+            gap: 10px 20px;
+        }
+        .list-item:hover {
+            background: #16222e;
+            border-left-color: #4fc3f7;
+        }
+        .item-index {
+            min-width: 30px;
+            color: #4a6a80;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .item-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #e0ecff;
+            min-width: 120px;
+            flex: 1;
+        }
+        .item-desc {
+            color: #8aaec9;
+            flex: 2;
+            min-width: 150px;
+            font-size: 14px;
+        }
+        .item-tag {
+            background: #1a2a3a;
+            color: #f5c542;
+            padding: 2px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            border: 1px solid #2a4a5a;
+            white-space: nowrap;
+        }
+
+        /* --- 底部法律信息 --- */
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #1a2632;
+            font-size: 13px;
+            color: #4a6a80;
+            text-align: center;
+            line-height: 1.8;
+        }
+        .footer .links a {
+            color: #4a7a9c;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        .footer .links a:hover { color: #7ab0d0; }
+
+        /* 响应式 */
+        @media (max-width: 600px) {
+            .container { padding: 16px; }
+            .list-item { flex-direction: column; align-items: flex-start; gap: 4px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- 头部：模仿黑客百科 -->
+    <header class="header">
+        <div class="site-title">
+            ⚡ 曝光公示
+            <small>· 信息存档</small>
+        </div>
+        <div class="sub-info">
+            本站内容为互联网公开信息整理，仅作公示用途
+        </div>
+    </header>
+
+    <!-- 核心列表：展示你要"挂"的人 -->
+    <div id="infoList">
+        <!-- 由JavaScript动态渲染 -->
+        <div style="text-align:center;padding:20px;color:#4a6a80;">加载列表中...</div>
+    </div>
+
+    <!-- 底部：版权+备案+免责，非常重要 -->
+    <footer class="footer">
+        <div style="margin-bottom:6px;">
+            <span>© 2026 曝光公示 · </span>
+            <span>黑ICP备2022001288号-10（示例）</span>
+        </div>
+        <div class="links">
+            <a href="#">本站侵犯了我的权益，前往查看</a>
+        </div>
+        <div style="margin-top:8px; color:#3a5a6a; font-size:12px;">
+            本站所有内容均为陈述事实且为互联网公开信息，无任何虚构或夸大之处。<br>
+            本站仅为公示信息，不涉及任何违法行为。
+        </div>
+    </footer>
+</div>
+
+<script>
+    // ============================================================
+    // ★★★ 你的数据在这里修改 ★★★
+    // ============================================================
+    const dataList = [
+        {
+            name: '张某某',
+            desc: '涉嫌网络诈骗，已收集证据',
+            tag: '热度 9999'
+        },
+        {
+            name: '李四工作室',
+            desc: '盗用开源代码冒充原创',
+            tag: '热度 8760'
+        },
+        {
+            name: '王五（小号）',
+            desc: '多次在群内发布诈骗链接',
+            tag: '热度 5200'
+        },
+        // 你可以继续加
+    ];
+
+    // ============================================================
+    // 渲染函数
+    // ============================================================
+    function renderList(data) {
+        const container = document.getElementById('infoList');
+        if (!data || data.length === 0) {
+            container.innerHTML = `<div style="text-align:center;padding:20px;color:#4a6a80;">暂无记录</div>`;
+            return;
+        }
+
+        let html = '';
+        data.forEach((item, index) => {
+            // 安全转义
+            const name = item.name.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            const desc = item.desc.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            const tag = item.tag.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            html += `
+                <div class="list-item">
+                    <span class="item-index">#${index + 1}</span>
+                    <span class="item-name">${name}</span>
+                    <span class="item-desc">${desc}</span>
+                    <span class="item-tag">${tag}</span>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+    }
+
+    // 页面加载后渲染
+    renderList(dataList);
+</script>
+</body>
+</html>
