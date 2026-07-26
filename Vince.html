@@ -546,7 +546,7 @@
         ============================================================ -->
         <header class="nav-header">
             <button class="back-btn" onclick="window.location.href='./index.html'">‹</button>
-            <span class="nav-title">🔍 <span data-i18n="nav_title">HelloTalk 闹剧</span></span>
+            <span class="nav-title">🔍 <span data-i18n="nav_title">Vince</span></span>
             <div class="lang-switcher">
                 <button class="lang-btn active" data-lang="zh">中文</button>
                 <button class="lang-btn" data-lang="en">EN</button>
@@ -559,7 +559,7 @@
         ============================================================ -->
         <div class="banner-img">
             <img src="./Vince/banner.jpg" alt="档案横幅" onerror="this.style.display='none';this.nextElementSibling.style.display='block';" />
-            <span class="fallback-text" style="display:none;">● 曝 光 档 案 ●</span>
+            <span class="fallback-text" style="display:none;">● 黑 客 档 案 ●</span>
         </div>
 
         <!-- ============================================================
@@ -622,7 +622,7 @@
             </div>
             <div class="license-card">
                 <img src="./Vince/license.jpg" alt="证书" onerror="this.style.display='none';this.nextElementSibling.style.display='block';" />
-                <div class="license-label" data-i18n="license_label">Vince 声称的"黑客证书"（仅供娱乐）</div>
+                <div class="license-label" data-i18n="license_label">Vince 娱乐黑客证书</div>
             </div>
         </div>
 
@@ -759,45 +759,56 @@
         // ============================================================
         // 生成 30 张图片 + 2 个视频
         // ============================================================
-        function generateMedia() {
-            const container = document.getElementById('mediaList');
-            if (!container) return;
-            let html = '';
+       function generateMedia() {
+    const container = document.getElementById('mediaList');
+    if (!container) return;
+    let html = '';
 
-            for (let i = 1; i <= 30; i++) {
-                const pngPath = `./Vince/${i}.png`;
-                const jpgPath = `./Vince/${i}.jpg`;
-                html += `
-                    <div class="media-item">
-                        <img src="${pngPath}" alt="截图 ${i}" loading="lazy"
-                             onerror="this.onerror=null; this.src='${jpgPath}';"
-                             onerror="this.style.display='none';this.nextElementSibling.style.display='block';" />
-                        <div class="media-placeholder" style="display:none;">📷 截图 ${i} 加载失败</div>
-                        <div class="media-label">
-                            <span>📷 名场面 ${i}</span>
-                            <span class="badge-type">图片</span>
-                        </div>
-                    </div>
-                `;
-            }
+    // 严格一一对应：根据实际文件扩展名
+    // 1-4: png, 5-16: jpg, 17-28: png, 29-30: jpg
+    const fileMap = {
+        1: 'png', 2: 'png', 3: 'png', 4: 'png',
+        5: 'jpg', 6: 'jpg', 7: 'jpg', 8: 'jpg', 9: 'jpg', 10: 'jpg',
+        11: 'jpg', 12: 'jpg', 13: 'jpg', 14: 'jpg', 15: 'jpg', 16: 'jpg',
+        17: 'png', 18: 'png', 19: 'png', 20: 'png', 21: 'png', 22: 'png',
+        23: 'png', 24: 'png', 25: 'png', 26: 'png', 27: 'png', 28: 'png',
+        29: 'jpg', 30: 'jpg'
+    };
 
-            const videoFiles = ['Vince1.mp4', 'Vince2.mp4'];
-            videoFiles.forEach((file, idx) => {
-                const num = idx + 1;
-                html += `
-                    <div class="media-item">
-                        <video src="./Vince/${file}" controls preload="metadata" style="width:100%;height:auto;display:block;background:#0a0a0a;" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"></video>
-                        <div class="media-placeholder" style="display:none;">🎬 视频 ${num} 加载失败</div>
-                        <div class="media-label">
-                            <span>🎬 名场面视频 ${num}</span>
-                            <span class="badge-type video">视频</span>
-                        </div>
-                    </div>
-                `;
-            });
+    for (let i = 1; i <= 30; i++) {
+        const ext = fileMap[i];
+        const path = `./Vince/${i}.${ext}`;
+        html += `
+            <div class="media-item">
+                <img src="${path}" alt="截图 ${i}" loading="lazy"
+                     onerror="this.style.display='none';this.nextElementSibling.style.display='block';" />
+                <div class="media-placeholder" style="display:none;">📷 截图 ${i} 加载失败</div>
+                <div class="media-label">
+                    <span>📷 名场面 ${i}</span>
+                    <span class="badge-type">图片</span>
+                </div>
+            </div>
+        `;
+    }
 
-            container.innerHTML = html;
-        }
+    // 两个视频：Vince1.mp4, Vince2.mp4
+    const videoFiles = ['Vince1.mp4', 'Vince2.mp4'];
+    videoFiles.forEach((file, idx) => {
+        const num = idx + 1;
+        html += `
+            <div class="media-item">
+                <video src="./Vince/${file}" controls preload="metadata" style="width:100%;height:auto;display:block;background:#0a0a0a;" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"></video>
+                <div class="media-placeholder" style="display:none;">🎬 视频 ${num} 加载失败</div>
+                <div class="media-label">
+                    <span>🎬 名场面视频 ${num}</span>
+                    <span class="badge-type video">视频</span>
+                </div>
+            </div>
+        `;
+    });
+
+    container.innerHTML = html;
+}
 
         // ============================================================
         // "上香" 功能
