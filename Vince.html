@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Vince · 详情</title>
+    <style>
+        /* ===== 全局重置 ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0a0a;
+            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 16px 12px;
+            color: #fff;
+        }
+
+        .app {
+            max-width: 420px;
+            width: 100%;
+            background: #0d0d0d;
+            border-radius: 24px;
+            padding: 0 0 20px 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 92vh;
+            overflow: hidden;
+        }
+
+        /* ================================================================
+           顶部导航栏
+           ================================================================ */
+        .nav-header {
+            background: #141414;
+            padding: 14px 16px 10px 16px;
+            border-bottom: 1px solid #1a1a1a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-header .back-btn {
+            color: #888;
+            font-size: 20px;
+            cursor: pointer;
+            transition: 0.2s;
+            text-decoration: none;
+            background: none;
+            border: none;
+            font-family: inherit;
+        }
+        .nav-header .back-btn:hover {
+            color: #fff;
+        }
+
+        .nav-header .nav-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            letter-spacing: 0.5px;
+        }
+        .nav-header .nav-title span {
+            color: #4a8af4;
+        }
+
+        .nav-header .lang-switcher {
+            display: flex;
+            gap: 2px;
+            background: #1a1a1a;
+            padding: 3px;
+            border-radius: 16px;
+            border: 1px solid #2a2a2a;
+        }
+        .nav-header .lang-btn {
+            background: transparent;
+            border: none;
+            color: #666;
+            padding: 3px 10px;
+            border-radius: 14px;
+            font-size: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.25s;
+            font-family: inherit;
+        }
+        .nav-header .lang-btn:hover {
+            color: #aaa;
+        }
+        .nav-header .lang-btn.active {
+            background: #2a2a3a;
+            color: #8ab4f8;
+        }
+
+        /* ================================================================
+           横幅图片
+           ================================================================ */
+        .banner-img {
+            width: 100%;
+            background: #1a1a2a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+            position: relative;
+        }
+        .banner-img img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .banner-img .fallback-text {
+            color: #4a6a8a;
+            font-size: 14px;
+            letter-spacing: 4px;
+            opacity: 0.4;
+            padding: 40px 0;
+        }
+
+        /* ================================================================
+           用户信息区（含"上香"按钮）
+           ================================================================ */
+        .user-info {
+            padding: 16px 16px 8px 16px;
+            border-bottom: 1px solid #1a1a1a;
+        }
+
+        .user-name {
+            font-size: 24px;
+            font-weight: 800;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .user-name .badge {
+            font-size: 12px;
+            font-weight: 600;
+            color: #f5c542;
+            background: #1a1a0a;
+            padding: 2px 12px;
+            border-radius: 12px;
+            border: 1px solid #f5c54233;
+        }
+        .user-name .alias {
+            font-size: 14px;
+            font-weight: 400;
+            color: #888;
+            margin-left: 4px;
+        }
+
+        .shangxiang-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: #1a1a0a;
+            border: 1px solid #f5c54244;
+            border-radius: 20px;
+            padding: 4px 14px 4px 10px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #f5c542;
+            cursor: pointer;
+            transition: 0.25s;
+            font-family: inherit;
+            margin-left: 4px;
+        }
+        .shangxiang-btn:hover {
+            background: #2a2a0a;
+            border-color: #f5c54288;
+            box-shadow: 0 0 24px rgba(245, 197, 66, 0.08);
+        }
+        .shangxiang-btn:active {
+            transform: scale(0.95);
+        }
+        .shangxiang-btn .icon {
+            font-size: 16px;
+        }
+
+        .user-meta {
+            display: flex;
+            gap: 16px;
+            margin-top: 6px;
+            font-size: 13px;
+            color: #777;
+            flex-wrap: wrap;
+        }
+        .user-meta .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .user-meta .meta-item .label {
+            color: #555;
+        }
+        .user-meta .meta-item .value {
+            color: #b388ff;
+            font-weight: 500;
+        }
+        .user-meta .meta-item .value.danger {
+            color: #e74c3c;
+        }
+
+        /* ================================================================
+           关键信息摘要
+           ================================================================ */
+        .summary-card {
+            background: #141414;
+            border-radius: 12px;
+            border: 1px solid #1a1a1a;
+            padding: 16px;
+            margin: 14px 16px 0 16px;
+        }
+
+        .summary-card .summary-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #aaa;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .summary-card .summary-title .dot {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #4a8af4;
+            animation: pulse-dot 1.5s infinite;
+        }
+        @keyframes pulse-dot {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.2;
+            }
+        }
+
+        .summary-card .summary-text {
+            font-size: 14px;
+            color: #ccc;
+            line-height: 1.8;
+        }
+        .summary-card .summary-text .highlight-red {
+            color: #e74c3c;
+            font-weight: 500;
+        }
+        .summary-card .summary-text .highlight-blue {
+            color: #4a8af4;
+            font-weight: 500;
+        }
+        .summary-card .summary-text .highlight-gold {
+            color: #f5c542;
+            font-weight: 500;
+        }
+
+        /* ================================================================
+           证书区域
+           ================================================================ */
+        .license-section {
+            padding: 16px 16px 0 16px;
+        }
+
+        .license-section .license-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .license-card {
+            background: #141414;
+            border-radius: 12px;
+            border: 1px solid #1a1a1a;
+            overflow: hidden;
+            transition: 0.2s;
+        }
+        .license-card:hover {
+            border-color: #2a2a3a;
+        }
+        .license-card img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .license-card .license-label {
+            padding: 8px 14px;
+            font-size: 12px;
+            color: #888;
+            border-top: 1px solid #1a1a1a;
+            background: #0d0d0d;
+            text-align: center;
+            font-style: italic;
+        }
+
+        /* ================================================================
+           证据区域：单列自适应
+           ================================================================ */
+        .evidence-section {
+            padding: 16px 16px 0 16px;
+            flex: 1;
+        }
+
+        .evidence-section .section-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .evidence-section .section-title .count {
+            font-size: 12px;
+            font-weight: 400;
+            color: #666;
+        }
+
+        .media-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .media-item {
+            width: 100%;
+            background: #141414;
+            border-radius: 12px;
+            border: 1px solid #1a1a1a;
+            overflow: hidden;
+            position: relative;
+            transition: 0.2s;
+        }
+        .media-item:hover {
+            border-color: #2a2a3a;
+        }
+
+        .media-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .media-item video {
+            width: 100%;
+            height: auto;
+            display: block;
+            background: #0a0a0a;
+        }
+
+        .media-item .media-label {
+            padding: 8px 14px;
+            font-size: 12px;
+            color: #666;
+            border-top: 1px solid #1a1a1a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #0d0d0d;
+        }
+        .media-item .media-label .badge-type {
+            font-size: 10px;
+            font-weight: 600;
+            color: #4a8af4;
+            background: #1a1a2a;
+            padding: 2px 12px;
+            border-radius: 12px;
+        }
+        .media-item .media-label .badge-type.video {
+            color: #f5c542;
+            background: #1a1a0a;
+        }
+
+        .media-item .media-placeholder {
+            padding: 40px 20px;
+            text-align: center;
+            color: #444;
+            font-size: 13px;
+            display: none;
+        }
+
+        /* ================================================================
+           "上香" GIF 浮层
+           ================================================================ */
+        .shangxiang-float {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            width: 280px;
+            max-width: 80vw;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9);
+            border: 1px solid #2a2a2a;
+            background: #141414;
+        }
+        .shangxiang-float.active {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+            pointer-events: auto;
+        }
+        .shangxiang-float img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* ================================================================
+           页脚（与 index.html 完全一致）
+           ================================================================ */
+        .site-footer {
+            margin-top: 16px;
+            padding: 20px 8px 16px 8px;
+            border-top: 1px solid #1a1a1a;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            text-align: center;
+        }
+
+        .footer-copyright {
+            font-size: 13px;
+            font-weight: 500;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+        }
+
+        .footer-licenses {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            font-size: 12px;
+            color: #cccccc;
+        }
+
+        .license-item {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        /* ★★★ 公安盾牌徽章 - 类名统一为 police-icon ★★★ */
+        .license-item .police-icon {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            background: url('data:image/png;base64,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') no-repeat center;
+            background-size: contain;
+            flex-shrink: 0;
+        }
+
+        .footer-action {
+            font-size: 14px;
+            color: #ffffff;
+            margin: 2px 0;
+        }
+        .footer-action .complaint-link {
+            color: #e74c3c;
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .footer-action .complaint-link:hover {
+            color: #ff6b5a;
+            text-decoration: underline;
+        }
+
+        .footer-disclaimer {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            font-size: 11px;
+            color: #666666;
+            line-height: 1.6;
+            letter-spacing: 0.2px;
+        }
+
+        /* ===== 响应式 ===== */
+        @media (max-width: 400px) {
+            .user-name {
+                font-size: 20px;
+            }
+            .shangxiang-btn {
+                font-size: 12px;
+                padding: 3px 10px 3px 8px;
+            }
+            .summary-card .summary-text {
+                font-size: 13px;
+            }
+            .media-item .media-label {
+                font-size: 11px;
+                padding: 6px 12px;
+            }
+            .shangxiang-float {
+                width: 220px;
+            }
+            .license-section {
+                padding: 12px 12px 0 12px;
+            }
+            .footer-copyright {
+                font-size: 12px;
+            }
+            .footer-licenses {
+                font-size: 11px;
+            }
+            .license-item .police-icon {
+                width: 16px;
+                height: 16px;
+            }
+            .footer-action {
+                font-size: 13px;
+            }
+            .footer-disclaimer {
+                font-size: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+
+        <!-- ============================================================
+        顶部导航栏
+        ============================================================ -->
+        <header class="nav-header">
+            <button class="back-btn" onclick="window.location.href='./index.html'">‹</button>
+            <span class="nav-title">🔍 <span data-i18n="nav_title">HelloTalk 闹剧</span></span>
+            <div class="lang-switcher">
+                <button class="lang-btn active" data-lang="zh">中文</button>
+                <button class="lang-btn" data-lang="en">EN</button>
+                <button class="lang-btn" data-lang="ru">РУ</button>
+            </div>
+        </header>
+
+        <!-- ============================================================
+        横幅图片（./Vince/banner.jpg）
+        ============================================================ -->
+        <div class="banner-img">
+            <img src="./Vince/banner.jpg" alt="档案横幅" onerror="this.style.display='none';this.nextElementSibling.style.display='block';" />
+            <span class="fallback-text" style="display:none;">● 曝 光 档 案 ●</span>
+        </div>
+
+        <!-- ============================================================
+        用户信息区
+        ============================================================ -->
+        <div class="user-info">
+            <div class="user-name">
+                Vince
+                <span class="badge" data-i18n="badge">已跑路</span>
+                <span class="alias" data-i18n="alias">@巴基斯坦老哥</span>
+                <button class="shangxiang-btn" id="shangxiangBtn">
+                    <span class="icon">🪔</span> <span data-i18n="shangxiang">上香</span>
+                </button>
+            </div>
+            <div class="user-meta">
+                <span class="meta-item">
+                    <span class="label" data-i18n="label_heat">热度</span>
+                    <span class="value">99,999</span>
+                </span>
+                <span class="meta-item">
+                    <span class="label" data-i18n="label_evidence">证据数</span>
+                    <span class="value">30</span>
+                </span>
+                <span class="meta-item">
+                    <span class="label" data-i18n="label_status">状态</span>
+                    <span class="value danger" data-i18n="status_active">已删号</span>
+                </span>
+                <span class="meta-item">
+                    <span class="label" data-i18n="label_report">报案</span>
+                    <span class="value" data-i18n="report_status">纯属娱乐</span>
+                </span>
+            </div>
+        </div>
+
+        <!-- ============================================================
+        关键信息摘要
+        ============================================================ -->
+        <div class="summary-card">
+            <div class="summary-title">
+                <span class="dot"></span>
+                <span data-i18n="summary_title">● 事件摘要</span>
+            </div>
+            <div class="summary-text" data-i18n="summary_text">
+                <span class="highlight-gold">巴基斯坦老哥 Vince</span> 在 HelloTalk 上对一位中国女生展开猛烈追求，
+                被拒绝后恼羞成怒，扬言要 <span class="highlight-red">"黑掉 HelloTalk 服务器"</span>。
+                随后他发来一张"黑客攻击"截图，结果被发现是在 Windows 上运行的 <span class="highlight-blue">cmd</span>，
+                执行的命令是 <span class="highlight-gold">dir /s</span>（查看文件夹）。
+                被群友当场揭穿后，Vince 恼羞成怒，留下一句 <span class="highlight-red">"你们等着"</span>，
+                然后 <span class="highlight-gold">光速删号跑路</span>。
+                整个过程堪称 HelloTalk 年度最佳喜剧。
+            </div>
+        </div>
+
+        <!-- ============================================================
+        证书区域：娱乐黑客证书
+        ============================================================ -->
+        <div class="license-section">
+            <div class="license-title">
+                🎭 <span data-i18n="license_title">娱乐黑客证书</span>
+            </div>
+            <div class="license-card">
+                <img src="./Vince/license.jpg" alt="证书" onerror="this.style.display='none';this.nextElementSibling.style.display='block';" />
+                <div class="license-label" data-i18n="license_label">Vince 声称的"黑客证书"（仅供娱乐）</div>
+            </div>
+        </div>
+
+        <!-- ============================================================
+        证据区域（30张图片 + 2个视频，路径 ./Vince/）
+        ============================================================ -->
+        <div class="evidence-section">
+            <div class="section-title">
+                📎 <span data-i18n="evidence_title">经典截图 · 名场面</span>
+                <span class="count">（30张图片 + 2个视频）</span>
+            </div>
+            <div class="media-list" id="mediaList"></div>
+        </div>
+
+        <!-- ============================================================
+        页脚（与 index.html 完全一致）
+        ============================================================ -->
+        <footer class="site-footer">
+
+            <div class="footer-copyright" data-i18n="copyright">阻击者联盟©2024 版权所有</div>
+
+            <div class="footer-licenses">
+                <div class="license-item">
+                    <span data-i18n="icp">黑ICP备2022001288号-10</span>
+                </div>
+                <div class="license-item">
+                    <span class="police-icon"></span>
+                    <span data-i18n="police">黑公网安备 230109020000411号</span>
+                </div>
+            </div>
+
+            <div class="footer-action">
+                <span data-i18n="action_prefix">本站侵犯了我（黑客）的权益，前往查看</span>
+                <a href="#" class="complaint-link" id="complaintLink" data-i18n="action_link">解决方案</a>
+            </div>
+
+            <div class="footer-disclaimer">
+                <span data-i18n="disclaimer1">本站所有内容均为陈述事实且为互联网公开信息，无任何虚构或夸大之处。</span>
+                <span data-i18n="disclaimer2">本站仅为公示黑客犯罪证据，不涉及任何犯罪行为。</span>
+            </div>
+
+        </footer>
+
+    </div>
+
+    <!-- ================================================================
+    "上香" GIF 浮层
+    ================================================================ -->
+    <div class="shangxiang-float" id="shangxiangFloat">
+        <img src="https://www.h-acker.cn/assets/shangxiang-LWTbELCR.gif" alt="上香动画" id="shangxiangGif" />
+    </div>
+
+    <script>
+        // ============================================================
+        // 多语言文本（含页脚完整翻译）
+        // ============================================================
+        const i18n = {
+            zh: {
+                nav_title: 'HelloTalk 闹剧',
+                badge: '已跑路',
+                alias: '@巴基斯坦老哥',
+                shangxiang: '上香',
+                label_heat: '热度',
+                label_evidence: '证据数',
+                label_status: '状态',
+                label_report: '报案',
+                status_active: '已删号',
+                report_status: '纯属娱乐',
+                summary_title: '● 事件摘要',
+                summary_text: '<span class="highlight-gold">巴基斯坦老哥 Vince</span> 在 HelloTalk 上对一位中国女生展开猛烈追求，被拒绝后恼羞成怒，扬言要 <span class="highlight-red">"黑掉 HelloTalk 服务器"</span>。随后他发来一张"黑客攻击"截图，结果被发现是在 Windows 上运行的 <span class="highlight-blue">cmd</span>，执行的命令是 <span class="highlight-gold">dir /s</span>（查看文件夹）。被群友当场揭穿后，Vince 恼羞成怒，留下一句 <span class="highlight-red">"你们等着"</span>，然后 <span class="highlight-gold">光速删号跑路</span>。整个过程堪称 HelloTalk 年度最佳喜剧。',
+                license_title: '🎭 娱乐黑客证书',
+                license_label: 'Vince 声称的"黑客证书"（仅供娱乐）',
+                evidence_title: '经典截图 · 名场面',
+                copyright: '阻击者联盟©2024 版权所有',
+                icp: '黑ICP备2022001288号-10',
+                police: '黑公网安备 230109020000411号',
+                action_prefix: '本站侵犯了我（黑客）的权益，前往查看',
+                action_link: '解决方案',
+                disclaimer1: '本站所有内容均为陈述事实且为互联网公开信息，无任何虚构或夸大之处。',
+                disclaimer2: '本站仅为公示黑客犯罪证据，不涉及任何犯罪行为。'
+            },
+            en: {
+                nav_title: 'HelloTalk Drama',
+                badge: 'Ran Away',
+                alias: '@Pakistani Bro',
+                shangxiang: 'Incense',
+                label_heat: 'Heat',
+                label_evidence: 'Evidence',
+                label_status: 'Status',
+                label_report: 'Report',
+                status_active: 'Deleted',
+                report_status: 'For Fun',
+                summary_title: '● Event Summary',
+                summary_text: '<span class="highlight-gold">Pakistani bro Vince</span> aggressively pursued a Chinese girl on HelloTalk. After being rejected, he threatened to <span class="highlight-red">"hack HelloTalk servers"</span>. He then sent a screenshot of his "hack" — which turned out to be <span class="highlight-blue">cmd</span> running on Windows, executing <span class="highlight-gold">dir /s</span> (list files). Exposed by the group, Vince got furious, left a message <span class="highlight-red">"just you wait"</span>, and <span class="highlight-gold">deleted his account instantly</span>. Best comedy of the year on HelloTalk.',
+                license_title: '🎭 Entertainment Hacker Certificate',
+                license_label: 'Vince\'s so-called "hacker certificate" (for entertainment only)',
+                evidence_title: 'Classic Screenshots · Legendary Moments',
+                copyright: 'Resistance Alliance ©2024 All Rights Reserved',
+                icp: 'ICP No. 2022001288号-10',
+                police: 'Public Security No. 230109020000411',
+                action_prefix: 'My rights have been violated, view',
+                action_link: 'Solution',
+                disclaimer1: 'All content on this site is factual and sourced from public internet information.',
+                disclaimer2: 'This site only discloses hacker evidence and does not involve illegal activities.'
+            },
+            ru: {
+                nav_title: 'HelloTalk Фарс',
+                badge: 'Сбежал',
+                alias: '@Пакистанский брат',
+                shangxiang: 'Фигурка',
+                label_heat: 'Рейтинг',
+                label_evidence: 'Доказательств',
+                label_status: 'Статус',
+                label_report: 'Заявление',
+                status_active: 'Удалён',
+                report_status: 'Для смеха',
+                summary_title: '● Сводка событий',
+                summary_text: '<span class="highlight-gold">Пакистанский брат Vince</span> агрессивно ухаживал за китайской девушкой в HelloTalk. После отказа он пригрозил <span class="highlight-red">"взломать серверы HelloTalk"</span>. Затем он прислал скриншот своей "атаки" — оказалось, что это <span class="highlight-blue">cmd</span> на Windows, выполняющий <span class="highlight-gold">dir /s</span> (просмотр папок). Разоблачённый группой, Vince пришёл в ярость, оставил сообщение <span class="highlight-red">"вы ещё пожалеете"</span> и <span class="highlight-gold">мгновенно удалил аккаунт</span>. Лучшая комедия года в HelloTalk.',
+                license_title: '🎭 Сертификат развлекательного хакера',
+                license_label: '"Хакерский сертификат" Vince (только для развлечения)',
+                evidence_title: 'Классические скриншоты · Легендарные моменты',
+                copyright: 'Альянс Сопротивления ©2024 Все права защищены',
+                icp: 'ICP № 2022001288号-10',
+                police: 'Номер общественной безопасности 230109020000411',
+                action_prefix: 'Мои права нарушены, перейти к',
+                action_link: 'Решению',
+                disclaimer1: 'Весь контент на этом сайте основан на фактах и общедоступной информации.',
+                disclaimer2: 'Этот сайт только раскрывает доказательства хакеров и не связан с незаконными действиями.'
+            }
+        };
+
+        let currentLang = 'zh';
+
+        // ============================================================
+        // 生成 30 张图片 + 2 个视频
+        // ============================================================
+        function generateMedia() {
+            const container = document.getElementById('mediaList');
+            if (!container) return;
+            let html = '';
+
+            for (let i = 1; i <= 30; i++) {
+                const pngPath = `./Vince/${i}.png`;
+                const jpgPath = `./Vince/${i}.jpg`;
+                html += `
+                    <div class="media-item">
+                        <img src="${pngPath}" alt="截图 ${i}" loading="lazy"
+                             onerror="this.onerror=null; this.src='${jpgPath}';"
+                             onerror="this.style.display='none';this.nextElementSibling.style.display='block';" />
+                        <div class="media-placeholder" style="display:none;">📷 截图 ${i} 加载失败</div>
+                        <div class="media-label">
+                            <span>📷 名场面 ${i}</span>
+                            <span class="badge-type">图片</span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            const videoFiles = ['Vince1.mp4', 'Vince2.mp4'];
+            videoFiles.forEach((file, idx) => {
+                const num = idx + 1;
+                html += `
+                    <div class="media-item">
+                        <video src="./Vince/${file}" controls preload="metadata" style="width:100%;height:auto;display:block;background:#0a0a0a;" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"></video>
+                        <div class="media-placeholder" style="display:none;">🎬 视频 ${num} 加载失败</div>
+                        <div class="media-label">
+                            <span>🎬 名场面视频 ${num}</span>
+                            <span class="badge-type video">视频</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // ============================================================
+        // "上香" 功能
+        // ============================================================
+        function initShangxiang() {
+            const btn = document.getElementById('shangxiangBtn');
+            const floatEl = document.getElementById('shangxiangFloat');
+            const gifImg = document.getElementById('shangxiangGif');
+
+            if (!btn || !floatEl || !gifImg) return;
+
+            let timer = null;
+
+            btn.addEventListener('click', function() {
+                if (timer) {
+                    clearTimeout(timer);
+                    timer = null;
+                }
+
+                const src = gifImg.src;
+                gifImg.src = '';
+                gifImg.src = src;
+
+                floatEl.classList.add('active');
+
+                timer = setTimeout(function() {
+                    floatEl.classList.remove('active');
+                    timer = null;
+                }, 1000);
+            });
+        }
+
+        // ============================================================
+        // 语言切换
+        // ============================================================
+        function setLanguage(lang) {
+            if (!i18n[lang]) return;
+            currentLang = lang;
+            const dict = i18n[lang];
+
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (dict[key] !== undefined) {
+                    if (key === 'summary_text') {
+                        el.innerHTML = dict[key];
+                    } else {
+                        el.textContent = dict[key];
+                    }
+                }
+            });
+
+            // 单独更新页脚链接
+            const linkEl = document.getElementById('complaintLink');
+            if (linkEl && dict.action_link !== undefined) {
+                linkEl.textContent = dict.action_link;
+            }
+
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === lang);
+            });
+            document.documentElement.lang = lang;
+        }
+
+        // ============================================================
+        // 绑定事件
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            generateMedia();
+            initShangxiang();
+
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    setLanguage(this.dataset.lang);
+                });
+            });
+
+            // ★★★ 页脚链接：跳回首页并切换到解决方案面板 ★★★
+            const complaintLink = document.getElementById('complaintLink');
+            if (complaintLink) {
+                complaintLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    // 跳回首页，并带上参数告诉首页切换到解决方案
+                    window.location.href = './index.html?tab=solution';
+                });
+            }
+
+            setLanguage('zh');
+        });
+    </script>
+</body>
+</html>
