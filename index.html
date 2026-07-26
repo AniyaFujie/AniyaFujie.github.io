@@ -2,1271 +2,215 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>黑客档案</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>曝光公示 · 信息列表</title>
     <style>
-        /* ===== 全局重置 ===== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        /* --- 全局重置 & 暗黑主题 --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            background: #0a0a0a;
-            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
-            display: flex;
-            justify-content: center;
+            background: #0a0e14;
+            color: #c8d6e5;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
             min-height: 100vh;
-            padding: 16px 12px;
-            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
         }
-
-        .app {
-            max-width: 420px;
+        .container {
+            max-width: 1000px;
             width: 100%;
-            background: #0d0d0d;
-            border-radius: 24px;
-            padding: 18px 16px 0 16px;
-            display: flex;
-            flex-direction: column;
-            min-height: 92vh;
-        }
-
-        .site-title-bar {
-            text-align: center;
-            padding: 6px 0 12px 0;
-            border-bottom: 1px solid #1a1a1a;
-            margin-bottom: 14px;
-        }
-        .site-title-bar .main-title {
-            font-size: 26px;
-            font-weight: 800;
-            color: #fff;
-            letter-spacing: 3px;
-        }
-        .site-title-bar .main-title span {
-            color: #4a8af4;
-        }
-        .site-title-bar .sub-title {
-            font-size: 12px;
-            color: #555;
-            letter-spacing: 4px;
-            margin-top: 2px;
-        }
-
-        .nav-header {
-            background: #141414;
+            background: #111a22;
+            border: 1px solid #1f2e3b;
             border-radius: 16px;
-            padding: 12px 14px 10px 14px;
-            margin-bottom: 16px;
-            border: 1px solid #1f1f1f;
+            padding: 30px 25px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.7);
         }
 
-        .nav-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
+        /* --- 头部 --- */
+        .header {
+            border-bottom: 1px solid #1f2e3b;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
         }
-
-        .lang-switcher {
-            display: flex;
-            gap: 2px;
-            background: #1a1a1a;
-            padding: 3px;
-            border-radius: 20px;
-            border: 1px solid #2a2a2a;
-        }
-        .lang-btn {
-            background: transparent;
-            border: none;
-            color: #666;
-            padding: 4px 12px;
-            border-radius: 16px;
-            font-size: 11px;
+        .site-title {
+            font-size: 28px;
             font-weight: 600;
-            cursor: pointer;
-            transition: 0.25s;
-            font-family: inherit;
+            color: #4fc3f7;
+            letter-spacing: 2px;
+            text-shadow: 0 0 15px rgba(79, 195, 247, 0.2);
         }
-        .lang-btn:hover {
-            color: #aaa;
-        }
-        .lang-btn.active {
-            background: #2a2a3a;
-            color: #8ab4f8;
-            box-shadow: 0 0 12px rgba(74, 138, 244, 0.08);
-        }
-
-        .page-tabs {
-            display: flex;
-            gap: 4px;
-        }
-        .page-tab {
-            padding: 6px 12px;
-            background: transparent;
-            border: 1px solid #2a2a2a;
-            border-radius: 16px;
-            font-size: 12px;
-            color: #777;
-            cursor: pointer;
-            transition: 0.25s;
-            font-family: inherit;
-            flex: 1;
-            text-align: center;
-        }
-        .page-tab:hover {
-            border-color: #4a6a8a;
-            color: #aaa;
-        }
-        .page-tab.active {
-            background: #1a1a2a;
-            border-color: #4a8af4;
-            color: #8ab4f8;
-            box-shadow: 0 0 20px rgba(74, 138, 244, 0.06);
-        }
-
-        .page-panel {
-            display: none;
-            animation: fade 0.3s ease;
-        }
-        .page-panel.active {
-            display: block;
-        }
-        @keyframes fade {
-            0% {
-                opacity: 0.3;
-                transform: translateY(6px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .sub-info {
-            font-size: 13px;
-            color: #666;
-            margin-bottom: 14px;
-            padding-left: 4px;
-        }
-
-        .exposure-card {
-            background: #141414;
-            border-radius: 12px;
-            padding: 4px 0;
-            border: 1px solid #1a1a1a;
-        }
-
-        .list-item {
-            display: flex;
-            align-items: center;
-            padding: 12px 14px;
-            gap: 12px;
-            border-bottom: 1px solid #0d0d0d;
-            transition: 0.15s;
-            cursor: pointer;
-        }
-        .list-item:last-child {
-            border-bottom: none;
-        }
-        .list-item:hover {
-            background: #1a1a1a;
-            border-radius: 8px;
-        }
-
-        .item-index {
-            font-size: 15px;
-            font-weight: 700;
-            color: #f5c542;
-            min-width: 32px;
-        }
-
-        .item-body {
-            flex: 1;
-            min-width: 0;
-        }
-        .item-name {
-            font-size: 15px;
-            font-weight: 600;
-            color: #fff;
-            line-height: 1.3;
-        }
-        .item-desc {
-            font-size: 12px;
-            color: #777;
-            margin-top: 1px;
-            line-height: 1.4;
-        }
-
-        .item-tag {
-            background: linear-gradient(135deg, #7c3aed, #a855f7);
-            color: #fff;
-            font-size: 12px;
-            font-weight: 600;
-            padding: 4px 14px;
-            border-radius: 20px;
-            white-space: nowrap;
-            flex-shrink: 0;
-            box-shadow: 0 0 20px rgba(168, 85, 247, 0.15);
-        }
-
-        .solution-divider {
-            height: 1px;
-            background: #1a1a1a;
-            margin-bottom: 18px;
-        }
-
-        .accordion {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .accordion-item {
-            background: #141414;
-            border-radius: 12px;
-            border: 1px solid #1a1a1a;
-            overflow: hidden;
-            transition: 0.3s;
-        }
-        .accordion-item:hover {
-            border-color: #2a2a2a;
-        }
-
-        .accordion-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 14px 16px;
-            cursor: pointer;
-            user-select: none;
-            transition: 0.2s;
-        }
-        .accordion-header:hover {
-            background: #1a1a1a;
-        }
-        .accordion-header .title {
-            font-size: 16px;
-            font-weight: 700;
-            color: #fff;
-            letter-spacing: 0.5px;
-        }
-        .accordion-header .arrow {
+        .site-title small {
             font-size: 14px;
-            color: #555;
-            transition: transform 0.3s ease;
-            flex-shrink: 0;
+            font-weight: normal;
+            color: #6a8fa0;
             margin-left: 12px;
         }
-        .accordion-item.open .accordion-header .arrow {
-            transform: rotate(180deg);
-        }
-
-        .accordion-body {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            padding: 0 16px;
-        }
-        .accordion-item.open .accordion-body {
-            max-height: 3000px;
-            padding: 0 16px 18px 16px;
-        }
-
-        .timeline {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            position: relative;
-        }
-
-        .timeline-item {
-            position: relative;
-            padding: 10px 0 10px 32px;
-            font-size: 14px;
-            line-height: 1.6;
-            color: #ddd;
-        }
-
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            left: 6px;
-            top: 16px;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: #2a2a3a;
-            border: 2px solid #3a3a4a;
-            z-index: 2;
-            transition: 0.3s;
-        }
-        .timeline-item.active::before {
-            background: #4a8af4;
-            border-color: #4a8af4;
-            box-shadow: 0 0 16px rgba(74, 138, 244, 0.3);
-        }
-
-        .timeline-item::after {
-            content: '';
-            position: absolute;
-            left: 10px;
-            top: 26px;
-            bottom: -6px;
-            width: 2px;
-            background: #1a1a2a;
-            z-index: 1;
-        }
-        .timeline-item:last-child::after {
-            display: none;
-        }
-
-        .timeline-branch {
-            padding-left: 32px;
-            margin: 4px 0 6px 0;
-            border-left: 2px dashed #1a1a2a;
-        }
-        .timeline-branch .timeline-item {
-            padding-left: 24px;
-        }
-        .timeline-branch .timeline-item::before {
-            left: 0px;
-            width: 8px;
-            height: 8px;
-            top: 16px;
-            background: #1a1a2a;
-            border-color: #2a2a3a;
-        }
-        .timeline-branch .timeline-item::after {
-            left: 4px;
-        }
-
-        .hl-gold {
-            color: #f5c542;
-        }
-        .hl-blue {
-            color: #4a8af4;
-            font-weight: 500;
-        }
-
-        .podium-title {
-            text-align: center;
-            font-size: 20px;
-            font-weight: 700;
-            margin-bottom: 20px;
-            letter-spacing: 2px;
-        }
-        .podium-title span {
-            color: #f5c542;
-            text-shadow: 0 0 30px rgba(245, 197, 66, 0.15);
-        }
-
-        .podium-row {
-            display: flex;
-            justify-content: center;
-            align-items: flex-end;
-            gap: 8px;
-            margin-bottom: 28px;
-            padding: 0 4px;
-        }
-
-        .podium-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            flex: 1;
-            max-width: 110px;
-            transition: 0.3s;
-        }
-
-        .podium-avatar {
-            width: 64px;
-            height: 64px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #1a1a2a, #0d0d1a);
-            border: 2px solid #333;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            flex-shrink: 0;
-            margin-bottom: 4px;
-            transition: 0.3s;
-        }
-        .podium-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .podium-avatar .fallback {
-            font-size: 24px;
-            font-weight: 700;
-            color: #8ab4f8;
-        }
-
-        .podium-item.first .podium-avatar {
-            width: 84px;
-            height: 84px;
-            border-color: #f5c542;
-            box-shadow: 0 0 40px rgba(245, 197, 66, 0.2), inset 0 0 30px rgba(245, 197, 66, 0.05);
-        }
-        .podium-item.first .podium-badge {
-            color: #f5c542;
-            font-size: 18px;
-            text-shadow: 0 0 20px rgba(245, 197, 66, 0.2);
-        }
-        .podium-item.first .podium-name {
-            font-size: 17px;
-        }
-
-        .podium-item.second .podium-avatar {
-            width: 60px;
-            height: 60px;
-            border-color: #8899aa;
-            box-shadow: 0 0 30px rgba(136, 153, 170, 0.12);
-        }
-        .podium-item.second .podium-badge {
-            color: #8899aa;
-        }
-
-        .podium-item.third .podium-avatar {
-            width: 60px;
-            height: 60px;
-            border-color: #cd7f32;
-            box-shadow: 0 0 30px rgba(205, 127, 50, 0.12);
-        }
-        .podium-item.third .podium-badge {
-            color: #cd7f32;
-        }
-
-        .podium-badge {
-            font-size: 14px;
-            font-weight: 800;
-            color: #666;
-            margin-bottom: 2px;
-        }
-
-        .podium-name {
-            font-size: 14px;
-            font-weight: 700;
-            color: #fff;
-            margin-top: 2px;
-            text-align: center;
-        }
-
-        .podium-heat {
-            font-size: 12px;
-            color: #777;
-            margin-top: 2px;
-        }
-        .podium-heat span {
-            color: #f5c542;
-            font-weight: 700;
-        }
-
-        .podium-base {
-            width: 100%;
-            height: 6px;
-            border-radius: 6px;
+        .sub-info {
             margin-top: 8px;
-            background: #2a2a2a;
-            transition: 0.3s;
-            overflow: hidden;
-        }
-        .podium-item.first .podium-base {
-            background: linear-gradient(90deg, #f5c542, #f59e0b);
-            height: 8px;
-            box-shadow: 0 0 24px rgba(245, 197, 66, 0.15);
-        }
-        .podium-item.second .podium-base {
-            background: linear-gradient(90deg, #8899aa, #6b7a8a);
-        }
-        .podium-item.third .podium-base {
-            background: linear-gradient(90deg, #cd7f32, #a8622a);
+            font-size: 14px;
+            color: #6a8fa0;
         }
 
-        .rank-list-header {
+        /* --- 核心列表区 --- */
+        .list-item {
             display: flex;
+            flex-wrap: wrap;
             align-items: center;
-            gap: 8px;
-            margin-bottom: 14px;
-        }
-        .rank-list-header .bar {
-            width: 4px;
-            height: 18px;
-            background: #4a8af4;
-            border-radius: 4px;
-        }
-        .rank-list-header h3 {
-            font-size: 16px;
-            font-weight: 700;
-            color: #fff;
-        }
-
-        .rank-card {
-            background: #141414;
-            border-radius: 12px;
-            border: 1px solid #1a1a1a;
-            padding: 2px 0;
-        }
-
-        .rank-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 14px;
-            border-bottom: 1px solid #0d0d0d;
-            transition: 0.15s;
-        }
-        .rank-item:last-child {
-            border-bottom: none;
-        }
-        .rank-item:hover {
-            background: #1a1a1a;
+            padding: 14px 16px;
+            margin-bottom: 4px;
             border-radius: 8px;
+            background: #0f1822;
+            border-left: 3px solid transparent;
+            transition: 0.2s;
+            gap: 10px 20px;
         }
-
-        .rank-number {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            border: 1.5px solid #333;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: 700;
-            color: #888;
-            flex-shrink: 0;
-            background: #0d0d0d;
+        .list-item:hover {
+            background: #16222e;
+            border-left-color: #4fc3f7;
         }
-
-        .rank-avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #1a1a2a, #0d0d1a);
-            border: 1.5px solid #2a2a2a;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            flex-shrink: 0;
-        }
-        .rank-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .rank-avatar .fallback {
+        .item-index {
+            min-width: 30px;
+            color: #4a6a80;
+            font-weight: bold;
             font-size: 14px;
-            font-weight: 700;
-            color: #8ab4f8;
         }
-
-        .rank-info {
+        .item-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #e0ecff;
+            min-width: 120px;
             flex: 1;
-            min-width: 0;
         }
-        .rank-info .rank-name {
+        .item-desc {
+            color: #8aaec9;
+            flex: 2;
+            min-width: 150px;
             font-size: 14px;
-            font-weight: 600;
-            color: #fff;
-            line-height: 1.3;
         }
-        .rank-info .rank-heat {
-            font-size: 12px;
-            color: #777;
-            margin-top: 1px;
-        }
-        .rank-info .rank-heat .value {
-            color: #a855f7;
-            font-weight: 600;
-        }
-
-        .rank-arrow {
-            color: #444;
-            font-size: 16px;
-            flex-shrink: 0;
-            transition: 0.2s;
-        }
-        .rank-item:hover .rank-arrow {
-            color: #777;
-        }
-
-        /* ================================================================
-           页脚
-           ================================================================ */
-        .site-footer {
-            margin-top: auto;
-            padding: 20px 8px 16px 8px;
-            border-top: 1px solid #1a1a1a;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            text-align: center;
-        }
-
-        .footer-copyright {
+        .item-tag {
+            background: #1a2a3a;
+            color: #f5c542;
+            padding: 2px 16px;
+            border-radius: 20px;
             font-size: 13px;
-            font-weight: 500;
-            color: #ffffff;
-            letter-spacing: 0.5px;
+            font-weight: bold;
+            border: 1px solid #2a4a5a;
+            white-space: nowrap;
         }
 
-        .footer-licenses {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            font-size: 12px;
-            color: #cccccc;
+        /* --- 底部法律信息 --- */
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #1a2632;
+            font-size: 13px;
+            color: #4a6a80;
+            text-align: center;
+            line-height: 1.8;
         }
-
-        .license-item {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-
-        /* ★★★ 公安盾牌徽章 - 类名统一为 police-icon ★★★ */
-        .license-item .police-icon {
-            display: inline-block;
-            width: 18px;
-            height: 18px;
-            background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAMAAAC7IEhfAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAMAUExURUxpcfjxsuzNbOC3gOCzcezbl/PWkvnpveKrTPXMmtmTRu/ljumwSdq1geSbP+a8ae+zSurBV/LjrO7Yb+bNlfrrrtmNP/PgdenEWurKhenFdt2rYt/EjPXnu+e9faFjNbWReNq8fdi1hZ1xTuOtVVxBUlIxSGFPX+jGXvHgmu/hn/Hfj96tYe7Yqea7XfXimPLghP334+Cwbvr32N3CiN/Bd+K5fui0Wt2fUeS2U+zOeuO1Y/bmiuPEiuG0bqyKduG5hfvOWaBuWk8sPa6DW++jROfFZfLkl86JV/nuyOzZfvjVY9qkYd20dJ9yXL+YWWxSWcmjbpyQdoyHee7ZfOGsVuTBau3WeOW7V92nUdCSRee3UcaEQuOwVufJk4deQfPOgIpsTt2fR6R/Vtyzd86keNqsab6SX8GYdPWlPPy/VZySeevMYufDeenMZtqkT9KRU/LNYP3aj8imfLCMbdQsG+m+Xem4UurDXtYgF+e2Weq+VRgWb+/KXui7WOWzUxESfO3BWQ8JatIWEduVQdcKCw8PcttQJ+GjSenIZNZfLhcHX9dKKNqXUOnBaN+fR8pEIuO4YdOEPOm0T+/GXNdBJNS6c96jUNIeEsZRJOhyNPbKaedoLeR2OelcJG9wehkaeIN9etQ1HvDOYqqkhdhzNNg6H/jCUv3VWNEIBRUeidl+OPG+UtmjW+GQP9x0OsdeLMsLCPfFXSMOXfAsEcEOEaqBUaWOZU0GRM+wax81jbOgboeFf8izeu6uWaSbfb2ve+OtV9RqMt1rNN2DQt6IN49aOOaiQ7slGmlgblBMb8ovF91YKMcfEF9ujex/M2FkfYeMjJKNfnl3d5wGHpJ7Xu2NQuKxTNBZLseoWb9oOfY7GcE7LWUZSGYEOPevRp+AXDVGinSAi4ZvW60TFUcmU7Cbe7ipdNBGJv7oapJsSV8nUa81NL9GI/R6LbORVbJQOCgueogKJ3ZjXuNCHK4HGn1oYDMfXLp7Pi8LVmsuUKM7LkFXknNiZHtdUdwjFSsuVN8AAAB1dFJOUwAE/hMaDRsI/gH+FPw6/L/+9GT+cS/+7vyP0M0kQbD5w1uI/uf5+v7sTHyU3FvVPLgXvyRJ/aPk1fyq66Vn2NEt/Nv85/7eh2FLzPfvsvX9+N7m8trP7+ntyafrm/OH+Jz59+3Pn3/Mq+qq+NHq5MF4+InD117Lt0kAAAU3SURBVDjLbdV3VJNnFAdgE8gkCQkJS9nInspQRGSIu+496qhard3tySAkIYuEbCBkAAFCwpCN7CkgKGUvBffee1S7z+kXUiL2cP9+zu97733Pe79582YXaFFIAMHFJdqFEBCyCDRv7kLAYGbmMegoN5fo6Gg3AjrG3AwGQ8wBYdaObsfj4pydDx06cuTo0bi4427rHGFzBEJ8ok66bHJ3dr5w4enThoZNm1xOEgIgcwQ6nIj3XHnB+epVobC7qqK5tdHTM/6Ew/8jQTAoOv72SgBWVw/marIkFQboHo+GghCfdmt9eOMWj3tPCzVqjk7B56uJk6qOca8t4T9BZ2eCINahG7d6eLg3ZOVyknU6saKEMzLZWeDl9XM4GgozzQkUEmS51cPTa8v5kSJiQgJRp1CoOUMDZ9MmRj08jjkBnzdBxxWbH/zm9W7kJVENQKKiSM2pH1p1ti3vgefWY6EOINMEQ7fla7WXGjS5yclEIJPDIRLPnMnNedRBo+VvC40BzZwwyHVbPpN5qSHXBHUA5GvaC2i8ie2uQZBpiVgUc8ry63wmzf13/q/JyQkJuqIiXUJCSUkRX9lJ4+VtD15uPX3vIAf0qUAjHDRAokLMF+uIABw0wvXBjiEGCHH98qtVD9uYzNubRzTJJamX023g8J4qtTo3p/kRjZff8eOGNVYQExwHzvhq8iXnTGZ1OndqqrKHSMyabG6l8do6MmL9fA3QzC0cg2nvKC3tu4e6lfkiNfVcYVlZVVVZTyz90j88bUE7Fut00GwabsRgmh+Wlva/g6+qzkxNFQoLC7u7e5A1lA9eTG2BEotysjdA88X+NpVS5Z0WWu3r6pwc8ePUx0KhWNydU3X1N1rpHSW4F+O/2NwAF3xmYyNV/t3CE/31IiuLLzZkisUazeXXteyWO2FgDNcE09Nvnb07zGRfrK+7NijMzDxXmJN1ra7+vYg9fJdUzLWJtJwFx+4C8H1dHf8yAM9Nw4si3vAYq5iLDDTC8MVfyGqy2wtamE0379cPDQ0MDOj4fMX1tzd52o727Oykz43NmAEwpSY7rLOltKnp7cX7938B6vr1589vNtHePFIa4DJj107HkNwuajZ4bJjGFolEtU03btz4o1YkYvNGJwQbSFQ4fP4ycyOUIFVdNdKCsTdaNpstevDsz2e1Ijabp80bp8dSu2YgdH5YhUQiwfRKwzpb730YzWts3Pyqr7+/fzSvOQ3VK5PBk3avh07DbysAWYkhScOUjbfb2lqvXLkykdfXlz+eRu3FyGRTETuCDRBi5bsnQqVC2pSdL6/R6+n08nIslkTB4+msyvNIJHzKzpvgY3iKsHVWgXvgKiSysAxbfBqo4mIsNvb0kyexxQCUdEV4f+NjDZteTlAr39W4iKn0dK6Mrmex5HIGQ6/foE+RISVp0l2rCT4W/71tIHO1t10E0obLpdBJjKQkBomu1wtSZCqVFLxrfkDQzA6AOQasiLSzM5BEFoVComRksBhweBJVABZIF/q7zoJWKyIFAgqFSjVACoWewSCnpFAZYABG+kf5zEALv2BbPB6flkalMoBUEolBlslS4FQqiSQA422Xr7EwweW2tnjwR0iWA2OGUxkkEhhsOwuCoNZ+y7xxZDIro7xcLieTUSgyg8VKTKQIdu/w83WwQJi2N5RgHxi4fz8OlwgguRyFYuDs7HA47+/WB/taQT5uSAQIYhGDXvvDvn17dy5dunDhkiU7F1haHraPcnWAWkA+XfgIM/O1aw8c+H6vES4AoP3BUPTH38K/OmNBlhC2jIMAAAAASUVORK5CYII=') no-repeat center;
-            background-size: contain;
-            flex-shrink: 0;
-        }
-
-        .footer-action {
-            font-size: 14px;
-            color: #ffffff;
-            margin: 2px 0;
-        }
-        .footer-action .complaint-link {
-            color: #e74c3c;
+        .footer .links a {
+            color: #4a7a9c;
             text-decoration: none;
-            font-weight: 600;
-            transition: 0.2s;
-            cursor: pointer;
+            margin: 0 10px;
         }
-        .footer-action .complaint-link:hover {
-            color: #ff6b5a;
-            text-decoration: underline;
-        }
+        .footer .links a:hover { color: #7ab0d0; }
 
-        .footer-disclaimer {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-            font-size: 11px;
-            color: #666666;
-            line-height: 1.6;
-            letter-spacing: 0.2px;
-        }
-
-        @media (max-width: 400px) {
-            .app {
-                padding: 12px 10px 0 10px;
-            }
-            .site-title-bar .main-title {
-                font-size: 22px;
-            }
-            .podium-item.first .podium-avatar {
-                width: 70px;
-                height: 70px;
-            }
-            .podium-item .podium-avatar {
-                width: 52px;
-                height: 52px;
-            }
-            .podium-item.second .podium-avatar,
-            .podium-item.third .podium-avatar {
-                width: 50px;
-                height: 50px;
-            }
-            .podium-row {
-                gap: 4px;
-            }
-            .timeline-item {
-                font-size: 13px;
-                padding: 8px 0 8px 28px;
-            }
-            .timeline-branch {
-                padding-left: 24px;
-            }
-            .accordion-header {
-                padding: 12px 14px;
-            }
-            .accordion-header .title {
-                font-size: 14px;
-            }
-            .footer-copyright {
-                font-size: 12px;
-            }
-            .footer-licenses {
-                font-size: 11px;
-            }
-            .license-item .police-icon {
-                width: 16px;
-                height: 16px;
-            }
-            .footer-action {
-                font-size: 13px;
-            }
-            .footer-disclaimer {
-                font-size: 10px;
-            }
-            .list-item {
-                padding: 10px 12px;
-                gap: 8px;
-            }
-            .item-tag {
-                font-size: 11px;
-                padding: 3px 10px;
-            }
+        /* 响应式 */
+        @media (max-width: 600px) {
+            .container { padding: 16px; }
+            .list-item { flex-direction: column; align-items: flex-start; gap: 4px; }
         }
     </style>
 </head>
 <body>
-    <div class="app">
-
-        <!-- ===== 顶部 ===== -->
-        <div class="site-title-bar">
-            <div class="main-title">⚡ 黑客<span>档案</span></div>
-            <div class="sub-title">· 信 息 存 档 ·</div>
+<div class="container">
+    <!-- 头部：模仿黑客百科 -->
+    <header class="header">
+        <div class="site-title">
+            ⚡ 曝光公示
+            <small>· 信息存档</small>
         </div>
-
-        <!-- ===== 导航栏 ===== -->
-        <header class="nav-header">
-            <div class="nav-top">
-                <div style="font-size:14px;font-weight:600;color:#888;" data-i18n="menu_label">菜单</div>
-                <div class="lang-switcher">
-                    <button class="lang-btn active" data-lang="zh">中文</button>
-                    <button class="lang-btn" data-lang="en">EN</button>
-                    <button class="lang-btn" data-lang="ru">РУ</button>
-                </div>
-            </div>
-            <div class="page-tabs">
-                <button class="page-tab active" data-page="page-home" data-i18n="tab_home">📋 黑客列表</button>
-                <button class="page-tab" data-page="page-solution" data-i18n="tab_solution">⚖️ 解决方案</button>
-                <button class="page-tab" data-page="page-ranking" data-i18n="tab_ranking">🏆 排行榜</button>
-            </div>
-        </header>
-
-        <!-- ===== 页面1：黑客列表 ===== -->
-        <div id="page-home" class="page-panel active">
-            <div class="sub-info" data-i18n="sub_info">本站内容为互联网公开信息整理，仅作公示用途</div>
-            <div class="exposure-card" id="infoList"></div>
+        <div class="sub-info">
+            本站内容为互联网公开信息整理，仅作公示用途
         </div>
+    </header>
 
-        <!-- ===== 页面2：解决方案 ===== -->
-        <div id="page-solution" class="page-panel">
-            <div class="solution-divider"></div>
-            <div class="accordion" id="accordionContainer"></div>
-        </div>
-
-        <!-- ===== 页面3：排行榜 ===== -->
-        <div id="page-ranking" class="page-panel">
-            <div class="podium-title">🔥 <span data-i18n="podium_strong">最强</span>黑客</div>
-            <div class="podium-row" id="podiumRow"></div>
-            <div class="rank-list-header">
-                <span class="bar"></span>
-                <h3 data-i18n="rank_full_list">完整榜单</h3>
-            </div>
-            <div class="rank-card" id="rankFullList"></div>
-        </div>
-
-        <!-- ===== 页脚 ===== -->
-        <footer class="site-footer">
-
-            <div class="footer-copyright" data-i18n="copyright">阻击者联盟©2024 版权所有</div>
-
-            <div class="footer-licenses">
-                <div class="license-item">
-                    <span data-i18n="icp">黑ICP备2022001288号-10</span>
-                </div>
-                <div class="license-item">
-                    <span class="police-icon"></span>
-                    <span data-i18n="police">黑公网安备 230109020000411号</span>
-                </div>
-            </div>
-
-            <div class="footer-action">
-                <span data-i18n="action_prefix">本站侵犯了我（黑客）的权益，前往查看</span>
-                <a href="#" class="complaint-link" id="complaintLink" data-i18n="action_link">解决方案</a>
-            </div>
-
-            <div class="footer-disclaimer">
-                <span data-i18n="disclaimer1">本站所有内容均为陈述事实且为互联网公开信息，无任何虚构或夸大之处。</span>
-                <span data-i18n="disclaimer2">本站仅为公示黑客犯罪证据，不涉及任何犯罪行为。</span>
-            </div>
-
-        </footer>
-
+    <!-- 核心列表：展示你要"挂"的人 -->
+    <div id="infoList">
+        <!-- 由JavaScript动态渲染 -->
+        <div style="text-align:center;padding:20px;color:#4a6a80;">加载列表中...</div>
     </div>
 
-    <script>
-        // ============================================================
-        // 多语言文本
-        // ============================================================
-        const i18n = {
-            zh: {
-                menu_label: '菜单',
-                tab_home: '📋 黑客列表',
-                tab_solution: '⚖️ 解决方案',
-                tab_ranking: '🏆 排行榜',
-                sub_info: '本站内容为互联网公开信息整理，仅作公示用途',
-                rank_full_list: '完整榜单',
-                podium_strong: '最强',
-                copyright: '阻击者联盟©2024 版权所有',
-                icp: '黑ICP备2022001288号-10',
-                police: '黑公网安备 230109020000411号',
-                action_prefix: '本站侵犯了我（黑客）的权益，前往查看',
-                action_link: '解决方案',
-                disclaimer1: '本站所有内容均为陈述事实且为互联网公开信息，无任何虚构或夸大之处。',
-                disclaimer2: '本站仅为公示黑客犯罪证据，不涉及任何犯罪行为。',
-                heat_label: '热度值'
-            },
-            en: {
-                menu_label: 'Menu',
-                tab_home: '📋 Hacker List',
-                tab_solution: '⚖️ Solution',
-                tab_ranking: '🏆 Ranking',
-                sub_info: 'Public internet information for disclosure purposes only.',
-                rank_full_list: 'Full Ranking',
-                podium_strong: 'Strongest',
-                copyright: 'Resistance Alliance ©2024 All Rights Reserved',
-                icp: 'ICP No. 2022001288号-10',
-                police: 'Public Security No. 230109020000411',
-                action_prefix: 'My rights have been violated, view',
-                action_link: 'Solution',
-                disclaimer1: 'All content on this site is factual and sourced from public internet information.',
-                disclaimer2: 'This site only discloses hacker evidence and does not involve illegal activities.',
-                heat_label: 'Heat'
-            },
-            ru: {
-                menu_label: 'Меню',
-                tab_home: '📋 Список хакеров',
-                tab_solution: '⚖️ Решение',
-                tab_ranking: '🏆 Рейтинг',
-                sub_info: 'Общедоступная информация из интернета.',
-                rank_full_list: 'Полный рейтинг',
-                podium_strong: 'Сильнейший',
-                copyright: 'Альянс Сопротивления ©2024 Все права защищены',
-                icp: 'ICP № 2022001288号-10',
-                police: 'Номер общественной безопасности 230109020000411',
-                action_prefix: 'Мои права нарушены, перейти к',
-                action_link: 'Решению',
-                disclaimer1: 'Весь контент на этом сайте основан на фактах и общедоступной информации.',
-                disclaimer2: 'Этот сайт только раскрывает доказательства хакеров и не связан с незаконными действиями.',
-                heat_label: 'Рейтинг'
-            }
-        };
+    <!-- 底部：版权+备案+免责，非常重要 -->
+    <footer class="footer">
+        <div style="margin-bottom:6px;">
+            <span>© 2026 曝光公示 · </span>
+            <span>黑ICP备2022001288号-10（示例）</span>
+        </div>
+        <div class="links">
+            <a href="#">本站侵犯了我的权益，前往查看</a>
+        </div>
+        <div style="margin-top:8px; color:#3a5a6a; font-size:12px;">
+            本站所有内容均为陈述事实且为互联网公开信息，无任何虚构或夸大之处。<br>
+            本站仅为公示信息，不涉及任何违法行为。
+        </div>
+    </footer>
+</div>
 
-        // ============================================================
-        // 数据
-        // ============================================================
-        const solutionData = {
-            zh: [{
-                id: 1,
-                title: '解决方案1',
-                defaultOpen: true,
-                steps: [
-                    '下载SQLMAP注入工具',
-                    '通过SQLMAP找到本站SQL注入漏洞',
-                    '使用SQL注入漏洞找到存储黑客信息的表',
-                    '最后使用SQL注入漏洞将黑客的信息删除'
-                ]
-            }, {
-                id: 2,
-                title: '解决方案2',
-                defaultOpen: false,
-                steps: [
-                    '通过相关方法收集本站信息',
-                    '收集本站侵犯黑客权益的相关证据',
-                    '打开Microsoft Word书写诉状',
-                    '向人民法院提交起诉本站的诉状',
-                    '等待人民法院受理发送起诉本站的相关传票',
-                    '等待人民法院开始庭外调解',
-                    '若不服从庭外调解，等待人民法院开始庭审',
-                    [
-                        '本站向人民法院提交相关证据',
-                        '黑客向人民法院提交相关证据',
-                        '等待人民法院开始一审',
-                        '黑客寻求相关律师支持',
-                        '一审开庭一审结束等待人民法院判决结果'
-                    ],
-                    '本站向高级人民法院提起二审诉讼',
-                    '本站向高级人民法院提交相关证据',
-                    '黑客向高级人民法院提交相关证据',
-                    '等待高级人民法院开始二审',
-                    '二审开庭二审结束等待高级人民法院判决结果',
-                    '根据判决结果，本站删除侵权信息'
-                ]
-            }],
-            en: [{
-                id: 1,
-                title: 'Solution 1',
-                defaultOpen: true,
-                steps: [
-                    'Download SQLMAP injection tool',
-                    'Use SQLMAP to find SQL injection vulnerabilities',
-                    'Use SQL injection to find the table storing hacker info',
-                    'Finally use SQL injection to delete the hacker\'s info'
-                ]
-            }, {
-                id: 2,
-                title: 'Solution 2',
-                defaultOpen: false,
-                steps: [
-                    'Collect information about this site',
-                    'Collect evidence of rights infringement',
-                    'Open Microsoft Word to write a complaint',
-                    'Submit the complaint to the People\'s Court',
-                    'Wait for the court to accept and send summons',
-                    'Wait for the court to begin mediation',
-                    'If mediation is rejected, wait for trial',
-                    [
-                        'This site submits evidence to the court',
-                        'Hacker submits evidence to the court',
-                        'Wait for the court to begin first instance',
-                        'Hacker seeks legal counsel',
-                        'First instance hearing → Verdict'
-                    ],
-                    'This site appeals to the Higher People\'s Court',
-                    'This site submits evidence to the Higher Court',
-                    'Hacker submits evidence to the Higher Court',
-                    'Wait for the Higher Court to begin second instance',
-                    'Second instance hearing → Verdict',
-                    'According to the verdict, this site deletes infringing content'
-                ]
-            }],
-            ru: [{
-                id: 1,
-                title: 'Решение 1',
-                defaultOpen: true,
-                steps: [
-                    'Скачайте инструмент SQLMAP',
-                    'Используйте SQLMAP для поиска уязвимостей',
-                    'Используйте инъекцию для поиска таблицы с данными',
-                    'Используйте инъекцию для удаления информации хакера'
-                ]
-            }, {
-                id: 2,
-                title: 'Решение 2',
-                defaultOpen: false,
-                steps: [
-                    'Соберите информацию о сайте',
-                    'Соберите доказательства нарушения прав',
-                    'Откройте Word и напишите жалобу',
-                    'Подайте жалобу в Народный суд',
-                    'Дождитесь принятия дела и повесток',
-                    'Дождитесь досудебного урегулирования',
-                    'Если урегулирование отклонено, дождитесь суда',
-                    [
-                        'Сайт предоставляет доказательства в суд',
-                        'Хакер предоставляет доказательства в суд',
-                        'Дождитесь первой инстанции',
-                        'Хакер ищет адвоката',
-                        'Заседание первой инстанции → Вердикт'
-                    ],
-                    'Сайт подает апелляцию в Высший суд',
-                    'Сайт предоставляет доказательства в Высший суд',
-                    'Хакер предоставляет доказательства в Высший суд',
-                    'Дождитесь второй инстанции в Высшем суде',
-                    'Заседание второй инстанции → Вердикт',
-                    'Согласно вердикту, сайт удаляет нарушающий контент'
-                ]
-            }]
-        };
+<script>
+    // ============================================================
+    // ★★★ 你的数据在这里修改 ★★★
+    // ============================================================
+    const dataList = [
+        {
+            name: '张某某',
+            desc: '涉嫌网络诈骗，已收集证据',
+            tag: '热度 9999'
+        },
+        {
+            name: '李四工作室',
+            desc: '盗用开源代码冒充原创',
+            tag: '热度 8760'
+        },
+        {
+            name: '王五（小号）',
+            desc: '多次在群内发布诈骗链接',
+            tag: '热度 5200'
+        },
+        // 你可以继续加
+    ];
 
-        const rankingData = {
-            zh: [
-                { name: 'Vince', heat: 99999, avatar: './Vince/icon.png' },
-                { name: '虚位以待', heat: 0, avatar: '' },
-                { name: '虚位以待', heat: 0, avatar: '' },
-                { name: '虚位以待', heat: 0, avatar: '' },
-                { name: '虚位以待', heat: 0, avatar: '' },
-                { name: '虚位以待', heat: 0, avatar: '' },
-                { name: '虚位以待', heat: 0, avatar: '' },
-                { name: '虚位以待', heat: 0, avatar: '' },
-            ],
-            en: [
-                { name: 'Vince', heat: 99999, avatar: './Vince/icon.png' },
-                { name: 'Vacant', heat: 0, avatar: '' },
-                { name: 'Vacant', heat: 0, avatar: '' },
-                { name: 'Vacant', heat: 0, avatar: '' },
-                { name: 'Vacant', heat: 0, avatar: '' },
-                { name: 'Vacant', heat: 0, avatar: '' },
-                { name: 'Vacant', heat: 0, avatar: '' },
-                { name: 'Vacant', heat: 0, avatar: '' },
-            ],
-            ru: [
-                { name: 'Vince', heat: 99999, avatar: './Vince/icon.png' },
-                { name: 'Вакантно', heat: 0, avatar: '' },
-                { name: 'Вакантно', heat: 0, avatar: '' },
-                { name: 'Вакантно', heat: 0, avatar: '' },
-                { name: 'Вакантно', heat: 0, avatar: '' },
-                { name: 'Вакантно', heat: 0, avatar: '' },
-                { name: 'Вакантно', heat: 0, avatar: '' },
-                { name: 'Вакантно', heat: 0, avatar: '' },
-            ]
-        };
-
-        const exposureData = {
-            zh: [
-                { name: 'Vince', desc: '巴基斯坦黑客骚扰中国女生装逼cmd入侵Hellotalk', tag: '热度 99999', link: './Vince.html' },
-            ],
-            en: [
-                { name: 'Vince', desc: 'Pakistani hacker harassed Chinese girl, pretended to hack HelloTalk with cmd', tag: 'Heat 99999', link: './Vince.html' },
-            ],
-            ru: [
-                { name: 'Vince', desc: 'Пакистанский хакер приставал к китайской девушке, притворялся взломщиком HelloTalk через cmd', tag: 'Рейтинг 99999', link: './Vince.html' },
-            ]
-        };
-
-        let currentLang = 'zh';
-
-        // ============================================================
-        // 渲染函数
-        // ============================================================
-        function renderExposure(lang) {
-            const data = exposureData[lang] || exposureData.zh;
-            const container = document.getElementById('infoList');
-            if (!container) return;
-            if (!data || data.length === 0) {
-                container.innerHTML = '<div style="color:#555;padding:16px;text-align:center;">暂无数据</div>';
-                return;
-            }
-            let html = '';
-            data.forEach((item, idx) => {
-                html += `
-                        <div class="list-item" onclick="window.location.href='${item.link}'">
-                            <span class="item-index">#${idx + 1}</span>
-                            <div class="item-body">
-                                <div class="item-name">${item.name}</div>
-                                <div class="item-desc">${item.desc}</div>
-                            </div>
-                            <span class="item-tag">${item.tag}</span>
-                        </div>
-                    `;
-            });
-            container.innerHTML = html;
+    // ============================================================
+    // 渲染函数
+    // ============================================================
+    function renderList(data) {
+        const container = document.getElementById('infoList');
+        if (!data || data.length === 0) {
+            container.innerHTML = `<div style="text-align:center;padding:20px;color:#4a6a80;">暂无记录</div>`;
+            return;
         }
 
-        function formatStepText(text) {
-            const replacements = [
-                { from: /下载|通过|使用|最后|收集|打开|提交|等待|发送|寻求|提起|根据/g, to: '<span class="hl-blue">$&</span>' },
-                { from: /若不服从|不服从|判决结果/g, to: '<span class="hl-gold">$&</span>' },
-                { from: /Download|Use|Collect|Open|Submit|Wait|Send|Seek|Appeal|According/g,
-                to: '<span class="hl-blue">$&</span>' },
-                { from: /rejected|verdict/g, to: '<span class="hl-gold">$&</span>' },
-                { from: /Скачайте|Используйте|Соберите|Откройте|Подайте|Дождитесь|Отправьте|ищет|подает|Согласно/g,
-                    to: '<span class="hl-blue">$&</span>' },
-                { from: /отклонено|вердикту/g, to: '<span class="hl-gold">$&</span>' },
-            ];
-            let result = text;
-            replacements.forEach(({ from, to }) => {
-                result = result.replace(from, to);
-            });
-            return result;
-        }
-
-        function renderSolution(lang) {
-            const data = solutionData[lang] || solutionData.zh;
-            const container = document.getElementById('accordionContainer');
-            if (!container) return;
-            let html = '';
-            data.forEach((item) => {
-                const isOpen = item.defaultOpen ? 'open' : '';
-                let stepsHtml = '';
-                item.steps.forEach((step) => {
-                    if (Array.isArray(step)) {
-                        let branchHtml = '';
-                        step.forEach((subStep) => {
-                            branchHtml += `
-                                        <li class="timeline-item">
-                                            ${formatStepText(subStep)}
-                                        </li>
-                                    `;
-                        });
-                        stepsHtml += `
-                                <div class="timeline-branch">
-                                    ${branchHtml}
-                                </div>
-                            `;
-                    } else {
-                        const isActive = step.includes('若不服从') || step.includes('If mediation') || step.includes('Если урегулирование') ||
-                            step.includes('根据判决') || step.includes('verdict') || step.includes('вердикт');
-                        const activeClass = isActive ? 'active' : '';
-                        stepsHtml += `
-                                <li class="timeline-item ${activeClass}">
-                                    ${formatStepText(step)}
-                                </li>
-                            `;
-                    }
-                });
-                html += `
-                        <div class="accordion-item ${isOpen}">
-                            <div class="accordion-header" data-id="${item.id}">
-                                <span class="title">${item.title}</span>
-                                <span class="arrow">▼</span>
-                            </div>
-                            <div class="accordion-body">
-                                <ul class="timeline">
-                                    ${stepsHtml}
-                                </ul>
-                            </div>
-                        </div>
-                    `;
-            });
-            container.innerHTML = html;
-            document.querySelectorAll('.accordion-header').forEach(header => {
-                header.addEventListener('click', function() {
-                    const parent = this.parentElement;
-                    const isCurrentlyOpen = parent.classList.contains('open');
-                    document.querySelectorAll('.accordion-item').forEach(item => {
-                        item.classList.remove('open');
-                    });
-                    if (!isCurrentlyOpen) {
-                        parent.classList.add('open');
-                    }
-                });
-            });
-        }
-
-        function renderRanking(lang) {
-            const data = rankingData[lang] || rankingData.zh;
-            if (!data || data.length === 0) return;
-            const sorted = [...data].sort((a, b) => b.heat - a.heat);
-            const top3 = sorted.slice(0, 3);
-            while (top3.length < 3) {
-                top3.push({ name: '---', heat: 0, avatar: '' });
-            }
-            const order = [top3[1], top3[0], top3[2]];
-            const labels = ['2', '1', '3'];
-            const classes = ['second', 'first', 'third'];
-            const colors = ['#8899aa', '#f5c542', '#cd7f32'];
-            let podiumHtml = '';
-            const heatLabel = i18n[lang]?.heat_label || '热度值';
-            order.forEach((item, idx) => {
-                const avatarHtml = item.avatar ? `<img src="${item.avatar}" alt="${item.name}" />` : `<span class="fallback">${item.name ? item.name.charAt(0) : '?'}</span>`;
-                podiumHtml += `
-                        <div class="podium-item ${classes[idx]}">
-                            <div class="podium-badge">${labels[idx]}</div>
-                            <div class="podium-avatar" style="border-color:${colors[idx]}">
-                                ${avatarHtml}
-                            </div>
-                            <div class="podium-name">${item.name}</div>
-                            <div class="podium-heat">🔥 <span>${item.heat.toLocaleString()}</span></div>
-                            <div class="podium-base"></div>
-                        </div>
-                    `;
-            });
-            document.getElementById('podiumRow').innerHTML = podiumHtml;
-
-            const rest = sorted.slice(3);
-            let listHtml = '';
-            if (rest.length === 0) {
-                listHtml = '<div style="color:#555;padding:16px;text-align:center;">暂无更多数据</div>';
-            } else {
-                rest.forEach((item, idx) => {
-                    const rank = idx + 4;
-                    const avatarHtml = item.avatar ? `<img src="${item.avatar}" alt="${item.name}" />` : `<span class="fallback">${item.name ? item.name.charAt(0) : '?'}</span>`;
-                    listHtml += `
-                            <div class="rank-item">
-                                <span class="rank-number">${rank}</span>
-                                <div class="rank-avatar">${avatarHtml}</div>
-                                <div class="rank-info">
-                                    <div class="rank-name">${item.name}</div>
-                                    <div class="rank-heat">${heatLabel} <span class="value">${item.heat.toLocaleString()}</span></div>
-                                </div>
-                                <span class="rank-arrow">›</span>
-                            </div>
-                        `;
-                });
-            }
-            document.getElementById('rankFullList').innerHTML = listHtml;
-        }
-
-        // ============================================================
-        // 切换语言
-        // ============================================================
-        function setLanguage(lang) {
-            if (!i18n[lang]) return;
-            currentLang = lang;
-            const dict = i18n[lang];
-
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                if (dict[key] !== undefined) {
-                    el.textContent = dict[key];
-                }
-            });
-
-            // 单独更新页脚链接
-            const linkEl = document.getElementById('complaintLink');
-            if (linkEl && dict.action_link !== undefined) {
-                linkEl.textContent = dict.action_link;
-            }
-
-            renderExposure(lang);
-            renderSolution(lang);
-            renderRanking(lang);
-
-            document.querySelectorAll('.lang-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.lang === lang);
-            });
-            document.documentElement.lang = lang;
-        }
-
-        // ============================================================
-        // 页面切换
-        // ============================================================
-        function switchPage(pageId) {
-            document.querySelectorAll('.page-panel').forEach(p => p.classList.remove('active'));
-            const target = document.getElementById(pageId);
-            if (target) target.classList.add('active');
-            document.querySelectorAll('.page-tab').forEach(tab => {
-                tab.classList.toggle('active', tab.dataset.page === pageId);
-            });
-        }
-
-        // ============================================================
-        // 绑定事件
-        // ============================================================
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.lang-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    setLanguage(this.dataset.lang);
-                });
-            });
-            document.querySelectorAll('.page-tab').forEach(tab => {
-                tab.addEventListener('click', function() {
-                    switchPage(this.dataset.page);
-                });
-            });
-
-            const complaintLink = document.getElementById('complaintLink');
-            if (complaintLink) {
-                complaintLink.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    switchPage('page-solution');
-                });
-            }
-
-            setLanguage('zh');
-
-            // ★★★ 支持从其他页面（如 Vince.html）通过 ?tab=solution 跳转过来时，自动切换到解决方案面板 ★★★
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('tab') === 'solution') {
-                switchPage('page-solution');
-            }
+        let html = '';
+        data.forEach((item, index) => {
+            // 安全转义
+            const name = item.name.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            const desc = item.desc.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            const tag = item.tag.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            html += `
+                <div class="list-item">
+                    <span class="item-index">#${index + 1}</span>
+                    <span class="item-name">${name}</span>
+                    <span class="item-desc">${desc}</span>
+                    <span class="item-tag">${tag}</span>
+                </div>
+            `;
         });
-    </script>
+        container.innerHTML = html;
+    }
+
+    // 页面加载后渲染
+    renderList(dataList);
+</script>
 </body>
 </html>
